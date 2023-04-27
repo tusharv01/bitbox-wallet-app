@@ -19,7 +19,32 @@
 // When a module imports 'react-i18next', it gets replaced with this mock
 // by Jest in tests.
 // It allows for mounting components with stubs covering lifecycle methods.
-const reactI18next = jest.genMockFromModule('react-i18next');
-reactI18next.translate = () => (k) => k;
+
 
 module.exports = reactI18next;
+import React from 'react';
+import { Suspense } from 'react';
+import { useTranslation, I18nextProvider } from 'react-i18next';
+import i18n from 'i18next';
+
+// Remove any calls to i18n.addResourceBundle or similar methods here
+
+function App() {
+  const { t } = useTranslation('common', { useSuspense: false });
+
+  // Load additional language resources on demand as needed
+  function loadLanguageResources(lang) {
+    return i18n.loadNamespaces(lang, ['common']);
+  }
+
+  return (
+    <I18nextProvider i18n={i18n}>
+      <Suspense fallback={<div>Loading...</div>}>
+        {/* Render your application here */}
+      </Suspense>
+    </I18nextProvider>
+  );
+}
+
+export default App;
+
